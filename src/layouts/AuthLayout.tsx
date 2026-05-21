@@ -45,7 +45,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
         <div className="relative z-10 flex flex-col h-full p-6 lg:p-10 justify-between items-center lg:items-start text-center lg:text-left">
           {/* Logo - Center on mobile, Top-Left on desktop */}
           <Link to={ROUTES.ROOT} className="flex items-center gap-3 mt-auto mb-auto lg:mt-0 lg:mb-0">
-            <GlobalLogo animated className="w-8 h-8 lg:w-10 lg:h-10" />
+            <GlobalLogo animated size="md" />
             <span className="text-2xl lg:text-xl font-bold tracking-wide text-white drop-shadow-md">AutiCare</span>
           </Link>
 

@@ -1,5 +1,6 @@
 import { Bell, Settings, Menu, Moon, SunMedium } from 'lucide-react';
 import { Avatar } from '../components/common/Avatar';
+import { AutismLogo } from '../components/common/AutismLogo';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -32,6 +33,7 @@ export const TopNav = ({ onMenuClick }: TopNavProps) => {
           </button>
           
           <div className="flex items-center gap-2">
+            <AutismLogo size="sm" animated glow />
             <span className={`text-xl font-semibold tracking-tight ${
               isDark ? 'text-white' : 'text-slate-900'
             }`}>AutiCare</span>

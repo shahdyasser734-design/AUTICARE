@@ -4,11 +4,13 @@ import { AutismLogo } from './AutismLogo';
 
 export const GlobalLogo = ({
   className,
+  size = 'xl',
   animated = false,
   interactive = false,
   onComplete,
 }: {
   className?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   animated?: boolean;
   interactive?: boolean;
   onComplete?: () => void;
@@ -33,7 +35,7 @@ export const GlobalLogo = ({
       )}
       onClick={handleClick}
     >
-      <AutismLogo size="xl" animated={animated && !clicked} glow={true} />
+      <AutismLogo size={size} animated={animated && !clicked} glow={true} />
     </div>
   );
 };
