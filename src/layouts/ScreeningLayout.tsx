@@ -6,15 +6,15 @@ import { ROUTES } from '../utils/constants';
 export const ScreeningLayout = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-navy-900 text-white flex flex-col">
-      <header className="h-20 border-b border-navy-800 flex items-center justify-between px-6 md:px-12">
+    <div className="min-h-screen bg-slate-50 dark:bg-navy-900 text-slate-900 dark:text-white flex flex-col transition-colors duration-300">
+      <header className="h-20 border-b border-slate-200 dark:border-navy-800 flex items-center justify-between px-6 md:px-12 bg-white/80 dark:bg-navy-900/80 backdrop-blur-sm">
         <div className="flex items-center gap-4 cursor-pointer" onClick={() => navigate(ROUTES.PARENT_HOME)}>
           <GlobalLogo className="w-10 h-10 scale-50 origin-left" />
           <span className="text-xl font-bold tracking-wide">AutiCare Screening</span>
         </div>
         <button 
           onClick={() => navigate(ROUTES.PARENT_HOME)}
-          className="text-navy-300 hover:text-white transition-colors text-sm font-medium"
+          className="text-slate-500 dark:text-navy-300 hover:text-slate-900 dark:hover:text-white transition-colors text-sm font-medium"
         >
           Exit Screening
         </button>

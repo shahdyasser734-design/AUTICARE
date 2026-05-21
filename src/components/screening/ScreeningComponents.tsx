@@ -38,7 +38,7 @@ export const ScreeningProgress = ({ currentPage, totalPages }: ScreeningProgress
 
       {/* Outer capsule track */}
       <div className="relative w-full h-5 rounded-full overflow-hidden
-        bg-white/5 border border-white/10 backdrop-blur-sm shadow-inner shadow-slate-950/60"
+        bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 backdrop-blur-sm shadow-inner shadow-slate-300 dark:shadow-slate-950/60"
       >
         {/* Glass inner track texture */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
@@ -136,7 +136,7 @@ export const ScreeningQuestion = ({
   questionNumber,
 }: ScreeningQuestionProps) => {
   return (
-    <div className="relative bg-white/5 backdrop-blur-md rounded-3xl p-8 md:p-12 space-y-8 w-full max-w-2xl border border-white/10 shadow-2xl shadow-slate-950/60 overflow-hidden">
+    <div className="relative bg-white dark:bg-white/5 backdrop-blur-md rounded-3xl p-8 md:p-12 space-y-8 w-full max-w-2xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl dark:shadow-slate-950/60 overflow-hidden">
       {/* Subtle glow background */}
       <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-orange-500/5 blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-cyan-500/5 blur-3xl pointer-events-none" />
@@ -147,7 +147,7 @@ export const ScreeningQuestion = ({
             Question {questionNumber}
           </span>
         )}
-        <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight">
+        <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-tight">
           {question}
         </h2>
         {description && (
@@ -166,8 +166,8 @@ export const ScreeningQuestion = ({
               className={clsx(
                 'w-full p-5 rounded-2xl border-2 transition-all duration-300 text-left flex items-center gap-4 group',
                 isSelected
-                  ? 'border-orange-500 bg-orange-500/12 shadow-lg shadow-orange-500/10'
-                  : 'border-white/10 bg-white/3 hover:border-orange-500/40 hover:bg-white/6'
+                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/12 shadow-lg shadow-orange-500/10'
+                  : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/3 hover:border-orange-500/40 hover:bg-orange-50 dark:hover:bg-white/6'
               )}
             >
               {/* Letter badge */}
@@ -176,7 +176,7 @@ export const ScreeningQuestion = ({
                   'flex-shrink-0 w-9 h-9 rounded-xl border-2 flex items-center justify-center text-sm font-bold transition-all duration-300',
                   isSelected
                     ? 'border-orange-500 bg-orange-500 text-white shadow-md shadow-orange-500/30'
-                    : 'border-white/20 bg-white/5 text-slate-400 group-hover:border-orange-400/50 group-hover:text-orange-300'
+                    : 'border-slate-300 dark:border-white/20 bg-white dark:bg-white/5 text-slate-500 dark:text-slate-400 group-hover:border-orange-400/50 group-hover:text-orange-500 dark:group-hover:text-orange-300'
                 )}
               >
                 {isSelected ? '✓' : letter}
@@ -186,7 +186,7 @@ export const ScreeningQuestion = ({
               <span
                 className={clsx(
                   'flex-1 text-base font-medium transition-colors duration-300',
-                  isSelected ? 'text-orange-300' : 'text-slate-200 group-hover:text-white'
+                  isSelected ? 'text-orange-600 dark:text-orange-300' : 'text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white'
                 )}
               >
                 {option.label}

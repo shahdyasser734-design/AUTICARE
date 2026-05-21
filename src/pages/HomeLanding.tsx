@@ -75,8 +75,8 @@ const stats = [
 
 const therapyServices = [
   {
-    title: 'Behavioral Therapy',
-    description: 'Evidence-based approaches to build positive behaviors and develop new skills.',
+    title: 'Pediatric Neurology',
+    description: 'Expert neurological assessments and specialized diagnostic care for developmental brain conditions.',
     image: therapy4,
     color: 'from-blue-500 to-blue-600',
   },
@@ -279,11 +279,12 @@ export const HomeLanding = () => {
                   className="group rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl dark:hover:border-white/20 transition-all duration-500 hover:-translate-y-2 cursor-pointer"
                   style={{ animationDelay: `${idx * 100}ms` }}
                 >
-                  <div className="relative aspect-video sm:aspect-[4/3] lg:aspect-[16/9] overflow-hidden">
+                  <div className="relative aspect-video sm:aspect-[4/3] lg:aspect-[16/9] overflow-hidden max-h-64 sm:max-h-none">
                     <img
                       src={service.image}
                       alt={service.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 will-change-transform"
+                      style={{ imageRendering: 'auto', backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
                     <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-30 transition-opacity duration-500`} />

@@ -49,7 +49,7 @@ export const AutismLogo = ({ size = 'md', animated = true, glow = true, classNam
   );
 
   return (
-    <div className={`flex items-center justify-center ${sizes[size]}`}>
+    <div className={`flex items-center justify-center flex-shrink-0 ${sizes[size]}`}>
       {SVGContent}
     </div>
   );

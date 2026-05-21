@@ -174,10 +174,10 @@ export const ParentScreening = () => {
   if (error && questions.length === 0) {
     return (
       <ScreeningLayout>
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-8 rounded-3xl text-center max-w-md">
+        <div className="bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 p-8 rounded-3xl text-center max-w-md shadow-xl dark:shadow-none">
           <div className="text-orange-500 text-4xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-white mb-2">Oops!</h2>
-          <p className="text-slate-400 mb-6">{error}</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Oops!</h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">{error}</p>
           <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </ScreeningLayout>
@@ -271,11 +271,11 @@ export const ParentScreening = () => {
           </div>
         )}
 
-        <div className="w-full mt-8 flex justify-between items-center bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10">
+        <div className="w-full mt-8 flex justify-between items-center bg-white dark:bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none">
           <Button
             onClick={handlePrevious}
             disabled={currentPage === 1 || submitting}
-            className="bg-white/10 hover:bg-white/15 text-white border border-white/15 shadow-none disabled:opacity-30"
+            className="bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-white/10 dark:hover:bg-white/15 dark:text-white border border-slate-300 dark:border-white/15 shadow-none disabled:opacity-30"
           >
             ← Previous
           </Button>
