@@ -37,7 +37,7 @@ export const SignupForm = () => {
     null
   );
 
-  const { signup, login, loading, error: authError } = useAuth();
+  const { signup, login, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (field: string, value: string) => {
@@ -146,10 +146,10 @@ export const SignupForm = () => {
       // Navigate according to role
       if (formData.role === ROLES.PARENT) navigate(ROUTES.PARENT_HOME);
       else navigate(ROUTES.DOCTOR_HOME);
-    } catch {
+    } catch (err: any) {
       setAlert({
         type: 'error',
-        message: authError || 'Signup failed. Please try again.',
+        message: err?.message || 'Signup failed. Please try again.',
       });
     }
   };

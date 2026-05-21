@@ -227,49 +227,21 @@ export const HomeLanding = () => {
                 </div>
               </div>
 
-              {/* Overlapping Floating Cards Hero Visual (CSS Composition ONLY) */}
-              <div className="relative w-full h-[400px] sm:h-[500px] lg:h-[550px] flex items-center justify-center">
-                {/* Background Glow */}
-                <div className="absolute w-[80%] h-[80%] rounded-full bg-gradient-to-tr from-amber-100/40 via-orange-100/30 to-blue-100/30 dark:from-blue-900/10 dark:via-indigo-900/5 dark:to-transparent blur-3xl pointer-events-none" />
-
-                {/* Card 1: Main Center/Background Card (therapy1) */}
-                <div className="absolute w-[60%] h-[75%] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-slate-100/80 dark:border-white/10 transition-all duration-500 transform hover:scale-[1.03] hover:z-30 group cursor-pointer">
-                  <img
-                    src={therapy1}
-                    alt="Clinical Child Therapy"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
-                  {/* Subtle Glass Tag */}
-                  <div className="absolute bottom-4 left-4 right-4 bg-white/15 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-xl p-3 text-white">
-                    <p className="text-xs uppercase tracking-wider font-semibold opacity-80">Interactive Therapy</p>
-                    <p className="text-sm font-bold truncate">Compassionate Care Specialists</p>
+              {/* Clean Responsive Grid Hero Visual */}
+              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 mt-12 lg:mt-0 relative z-20">
+                <div className="h-64 sm:h-72 lg:h-96 rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group relative transform hover:-translate-y-2 transition-all duration-500 bg-white/5 backdrop-blur-sm p-1.5">
+                  <div className="w-full h-full rounded-[1.5rem] overflow-hidden">
+                    <img src={therapy1} alt="Mother helping child with crafts" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
                 </div>
-
-                {/* Card 2: Floating Top-Left Overlay (therapy2) */}
-                <div className="absolute top-[5%] left-[2%] w-[42%] h-[45%] rounded-2xl overflow-hidden shadow-xl border-2 border-slate-100/90 dark:border-white/10 transition-all duration-500 transform hover:scale-[1.08] hover:rotate-[-2deg] hover:z-30 group cursor-pointer animate-float">
-                  <img
-                    src={therapy2}
-                    alt="Sensory/Speech Development"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent" />
-                  <div className="absolute top-3 right-3 bg-amber-500 text-white rounded-full p-1.5 shadow-md">
-                    <Heart size={14} className="fill-current" />
+                <div className="h-64 sm:h-72 lg:h-96 rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group relative transform hover:-translate-y-2 transition-all duration-500 sm:mt-12 bg-white/5 backdrop-blur-sm p-1.5">
+                  <div className="w-full h-full rounded-[1.5rem] overflow-hidden">
+                    <img src={therapy2} alt="Child using tablet" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
                 </div>
-
-                {/* Card 3: Floating Bottom-Right Overlay (therapy3) */}
-                <div className="absolute bottom-[5%] right-[2%] w-[45%] h-[48%] rounded-2xl overflow-hidden shadow-xl border-2 border-slate-100/90 dark:border-white/10 transition-all duration-500 transform hover:scale-[1.08] hover:rotate-[2deg] hover:z-30 group cursor-pointer animate-float-delayed">
-                  <img
-                    src={therapy3}
-                    alt="Supportive Early Screening"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent" />
-                  <div className="absolute bottom-3 left-3 bg-white/30 dark:bg-black/30 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg px-2.5 py-1 text-white text-[10px] uppercase font-bold tracking-wider">
-                    Early AI screening
+                <div className="h-64 sm:h-72 lg:h-96 rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group relative transform hover:-translate-y-2 transition-all duration-500 sm:mt-24 bg-white/5 backdrop-blur-sm p-1.5">
+                  <div className="w-full h-full rounded-[1.5rem] overflow-hidden">
+                    <img src={therapy3} alt="Mother teaching child at desk" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
                 </div>
               </div>

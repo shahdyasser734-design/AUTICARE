@@ -15,7 +15,7 @@ export const LoginForm = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const { login, loading, error: authError } = useAuth();
+  const { login, loading } = useAuth();
   const navigate = useNavigate();
 
   const getRoleHome = (role?: string) => {
@@ -49,10 +49,10 @@ export const LoginForm = () => {
         const parsedUser = storedUser ? JSON.parse(storedUser) : null;
         navigate(getRoleHome(parsedUser?.role), { replace: true });
       }, 300);
-    } catch {
+    } catch (err: any) {
       setAlert({
         type: 'error',
-        message: authError || 'Login failed. Please check your credentials.',
+        message: err?.message || 'Login failed. Please check your credentials.',
       });
     }
   };
