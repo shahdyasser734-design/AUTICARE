@@ -235,17 +235,17 @@ export const HomeLanding = () => {
 
               {/* Clean Responsive Grid Hero Visual */}
               <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-12 lg:mt-0 relative z-20">
-                <div className="aspect-[4/3] sm:aspect-auto sm:h-72 lg:h-96 rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group relative transform hover:-translate-y-2 transition-all duration-500 bg-white/5 backdrop-blur-sm p-1.5">
+                <div className="aspect-[4/3] lg:aspect-[4/5] rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group relative transform hover:-translate-y-2 transition-all duration-500 bg-white/5 backdrop-blur-sm p-1.5">
                   <div className="w-full h-full rounded-[1.5rem] overflow-hidden">
                     <img src={therapy1} alt="Mother helping child with crafts" className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" style={{ imageRendering: 'auto', backfaceVisibility: 'hidden', transform: 'translateZ(0)' }} />
                   </div>
                 </div>
-                <div className="aspect-[4/3] sm:aspect-auto sm:h-72 lg:h-96 rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group relative transform hover:-translate-y-2 transition-all duration-500 sm:mt-12 bg-white/5 backdrop-blur-sm p-1.5">
+                <div className="aspect-[4/3] lg:aspect-[4/5] rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group relative transform hover:-translate-y-2 transition-all duration-500 sm:mt-12 bg-white/5 backdrop-blur-sm p-1.5">
                   <div className="w-full h-full rounded-[1.5rem] overflow-hidden">
                     <img src={therapy2} alt="Child using tablet" className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" style={{ imageRendering: 'auto', backfaceVisibility: 'hidden', transform: 'translateZ(0)' }} />
                   </div>
                 </div>
-                <div className="aspect-[4/3] sm:aspect-auto sm:h-72 lg:h-96 rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group relative transform hover:-translate-y-2 transition-all duration-500 sm:col-span-2 lg:col-span-1 sm:mt-8 lg:mt-24 bg-white/5 backdrop-blur-sm p-1.5">
+                <div className="aspect-[4/3] lg:aspect-[4/5] rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group relative transform hover:-translate-y-2 transition-all duration-500 sm:mt-8 lg:mt-24 bg-white/5 backdrop-blur-sm p-1.5 sm:justify-self-center sm:col-span-2 lg:col-span-1 lg:justify-self-auto sm:max-w-md lg:max-w-none w-full">
                   <div className="w-full h-full rounded-[1.5rem] overflow-hidden">
                     <img src={therapy3} alt="Mother teaching child at desk" className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" style={{ imageRendering: 'auto', backfaceVisibility: 'hidden', transform: 'translateZ(0)' }} />
                   </div>

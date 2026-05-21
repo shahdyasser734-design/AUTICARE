@@ -16,7 +16,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
       <div className="hidden lg:block absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.15),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.15),_transparent_30%)] pointer-events-none z-0" />
 
       {/* ── IMAGE PANEL (Responsive Header on Mobile, Left Column on Desktop) ── */}
-      <div className="relative flex flex-col overflow-hidden h-48 sm:h-64 lg:sticky lg:top-0 lg:h-screen w-full flex-shrink-0 z-10 lg:z-auto">
+      <div className="relative flex flex-col overflow-hidden h-48 sm:h-64 lg:sticky lg:top-0 lg:h-screen w-full flex-shrink-0 z-10 lg:z-auto lg:self-start">
         {/* Background image */}
         <img
           src={authHeroImg}
