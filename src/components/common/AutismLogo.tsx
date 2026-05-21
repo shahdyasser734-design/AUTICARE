@@ -28,9 +28,9 @@ export const AutismLogo = ({ size = 'md', animated = true, glow = true, classNam
   const SVGContent = (
     <svg
       viewBox="0 0 100 100"
-      className={`${animated ? 'animate-spin-slow' : ''} ${className}`}
+      preserveAspectRatio="xMidYMid meet"
+      className={`w-full h-full object-contain ${animated ? 'animate-[spin_20s_linear_infinite]' : ''} ${className}`}
       style={{
-        animationDuration: animated ? '15s' : 'none',
         filter: glow ? `drop-shadow(0 4px 12px ${isDark ? 'rgba(96,165,250,0.3)' : 'rgba(59,130,246,0.3)'})` : 'none',
       }}
       xmlns="http://www.w3.org/2000/svg"

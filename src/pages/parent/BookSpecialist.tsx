@@ -73,23 +73,23 @@ export const BookSpecialist = () => {
     <MainLayout>
       <div className="max-w-7xl mx-auto space-y-10">
         <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-4xl font-bold text-navy-900 mb-4">Our Specialists</h1>
-          <p className="text-navy-500 text-lg">
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">Our Specialists</h1>
+          <p className="text-slate-600 dark:text-slate-400 text-lg">
             Connect with our certified pediatric neurologists and specialized therapists to guide your child's journey.
           </p>
         </div>
 
         {/* Custom Segmented Control */}
         <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3">
-          <div className="bg-white p-1.5 rounded-2xl shadow-sm border border-soft-gray inline-flex relative">
+          <div className="bg-white dark:bg-slate-800 p-1.5 rounded-2xl shadow-sm border border-slate-200 dark:border-white/10 inline-flex relative">
             <div 
-              className="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-navy-900 rounded-xl transition-all duration-300 ease-out"
+              className="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-slate-900 dark:bg-blue-600 rounded-xl transition-all duration-300 ease-out"
               style={{ left: activeTab === 'doctors' ? '6px' : 'calc(50% + 3px)' }}
             />
             <button
               className={clsx(
                 "relative z-10 px-6 py-3 rounded-xl font-bold text-sm transition-colors duration-300 min-w-[120px] sm:min-w-[160px] w-full sm:w-auto",
-                activeTab === 'doctors' ? "text-white" : "text-navy-600 hover:text-navy-900"
+                activeTab === 'doctors' ? "text-white" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               )}
               onClick={() => setActiveTab('doctors')}
             >
@@ -98,7 +98,7 @@ export const BookSpecialist = () => {
             <button
               className={clsx(
                 "relative z-10 px-6 py-3 rounded-xl font-bold text-sm transition-colors duration-300 min-w-[120px] sm:min-w-[160px] w-full sm:w-auto",
-                activeTab === 'therapists' ? "text-white" : "text-navy-600 hover:text-navy-900"
+                activeTab === 'therapists' ? "text-white" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               )}
               onClick={() => setActiveTab('therapists')}
             >
@@ -113,8 +113,12 @@ export const BookSpecialist = () => {
             <LoadingSpinner />
           </div>
         ) : specialists.length === 0 ? (
-          <div className="text-center py-12 text-navy-500">
-            <p>No specialists found.</p>
+          <div className="text-center py-16 bg-white dark:bg-white/5 rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm">
+            <div className="w-20 h-20 bg-blue-50 dark:bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+              {activeTab === 'doctors' ? '👨‍⚕️' : '🧑‍🏫'}
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No {activeTab === 'doctors' ? 'Doctors' : 'Therapists'} Found</h3>
+            <p className="text-slate-500 dark:text-slate-400">We couldn't find any {activeTab} at the moment. Please check back later.</p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

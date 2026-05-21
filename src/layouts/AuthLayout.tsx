@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Heart, Shield, Star, Puzzle, Stethoscope } from 'lucide-react';
 import { GlobalLogo } from '../components/common/GlobalLogo';
 import { ROUTES } from '../utils/constants';
+import { useTheme } from '../context/ThemeContext';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 import authHeroImg from '../assets/images/auth-hero.jpg';
 
 interface AuthLayoutProps {
@@ -10,8 +12,13 @@ interface AuthLayoutProps {
 }
 
 export const AuthLayout = ({ children }: AuthLayoutProps) => {
+  const { isDark } = useTheme();
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:grid lg:grid-cols-2">
+    <div className={`min-h-screen flex flex-col lg:grid lg:grid-cols-2 transition-colors duration-500 ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       {/* Subtle radial gradients (desktop only to save performance on mobile) */}
       <div className="hidden lg:block absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.15),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.15),_transparent_30%)] pointer-events-none z-0" />
 
@@ -100,8 +107,8 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
       {/* ── RIGHT PANEL: Auth form ── */}
       <div className="flex flex-1 flex-col items-center justify-start lg:justify-center p-6 sm:p-10 lg:p-12 relative z-10 w-full -mt-6 lg:mt-0 lg:min-h-screen">
         <div className="w-full max-w-md relative">
-          <div className="rounded-[2rem] border border-white/10 bg-slate-900/95 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
-            <div className="rounded-[1.5rem] bg-slate-950/90 p-6 sm:p-8 shadow-inner relative z-10">
+          <div className={`rounded-[2rem] border p-6 sm:p-8 shadow-2xl backdrop-blur-xl ${isDark ? 'border-white/10 bg-slate-900/95' : 'border-slate-200 bg-white/95'}`}>
+            <div className={`rounded-[1.5rem] p-6 sm:p-8 shadow-inner relative z-10 ${isDark ? 'bg-slate-950/90' : 'bg-slate-50/90'}`}>
               <div className="space-y-6">
                 {children}
               </div>

@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Heart, MessageSquare, ArrowUpRight, BookOpen, Users, Puzzle, Stethoscope, Brain, Sparkles, Activity } from 'lucide-react';
+import { ArrowRight, Heart, MessageSquare, ArrowUpRight, BookOpen, Users, Puzzle, Stethoscope, Brain, Sparkles, Activity, Menu, X } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { AutismLogo } from '../components/common/AutismLogo';
 import { SpecialistCard } from '../components/common/SpecialistCard';
@@ -17,7 +18,7 @@ import therapySupport from '../assets/images/therapy-support.jpg';
 const specialists = [
   {
     name: 'Dr. Sarah Johnson',
-    specialty: 'Developmental Pediatrics',
+    specialty: 'Neurologist',
     rating: 4.9,
     reviewCount: 124,
     experience: 12,
@@ -26,7 +27,7 @@ const specialists = [
   },
   {
     name: 'Dr. Ahmed Hassan',
-    specialty: 'Speech & Language Pathology',
+    specialty: 'Speech Therapist',
     rating: 4.8,
     reviewCount: 98,
     experience: 10,
@@ -35,13 +36,22 @@ const specialists = [
   },
   {
     name: 'Dr. Emily Chen',
-    specialty: 'Behavioral Therapy',
+    specialty: 'Behavioral Therapist',
     rating: 4.9,
     reviewCount: 156,
     experience: 9,
     bio: 'Certified in ABA therapy with focus on positive behavioral interventions.',
     color: 'from-purple-500 to-purple-600',
   },
+  {
+    name: 'Dr. Marcus Webb',
+    specialty: 'Autism Specialist',
+    rating: 4.9,
+    reviewCount: 204,
+    experience: 15,
+    bio: 'Comprehensive developmental assessments and customized intervention strategies.',
+    color: 'from-orange-500 to-orange-600',
+  }
 ];
 
 const features = [
@@ -152,6 +162,13 @@ const PrimaryHeroCta = () => {
 };
 
 export const HomeLanding = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close menu when clicking links
+  const handleNavClick = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-slate-800 overflow-hidden dark:from-navy-900 dark:via-navy-950 dark:to-navy-950 dark:text-slate-100 transition-colors duration-500">
       {/* Fixed animated navbar */}
@@ -173,10 +190,55 @@ export const HomeLanding = () => {
                 <Button variant="outline" size="sm">Login</Button>
               </Link>
             </div>
-            <GetStartedNavButton />
+            <div className="hidden sm:block">
+              <GetStartedNavButton />
+            </div>
+            <button
+              className="sm:hidden p-2 -mr-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu size={24} />
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* Mobile Menu Drawer */}
+      <div 
+        className={`fixed inset-0 z-[60] bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300 sm:hidden ${
+          isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+      <div
+        className={`fixed top-0 right-0 bottom-0 z-[70] w-64 bg-white dark:bg-navy-900 shadow-2xl transition-transform duration-300 ease-in-out sm:hidden ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          <div className="p-4 flex justify-end border-b border-slate-200 dark:border-white/10">
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-white/10"
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
+          </div>
+          <div className="flex flex-col py-6 px-4 gap-2 overflow-y-auto">
+            <a href="#" onClick={handleNavClick} className="p-3 text-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors">Home</a>
+            <a href="#" onClick={handleNavClick} className="p-3 text-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors">About</a>
+            <a href="#" onClick={handleNavClick} className="p-3 text-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors">Services</a>
+            <a href="#" onClick={handleNavClick} className="p-3 text-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors">Specialists</a>
+            
+            <div className="h-px bg-slate-200 dark:bg-white/10 my-4 mx-2" />
+            
+            <Link to={ROUTES.LOGIN} onClick={handleNavClick} className="p-3 text-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors">Login</Link>
+            <Link to={ROUTES.SIGNUP} onClick={handleNavClick} className="p-3 text-lg font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-xl transition-colors">Sign Up</Link>
+          </div>
+        </div>
+      </div>
 
       <main className="pt-16">
         {/* HERO SECTION */}
@@ -279,12 +341,11 @@ export const HomeLanding = () => {
                   className="group rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl dark:hover:border-white/20 transition-all duration-500 hover:-translate-y-2 cursor-pointer"
                   style={{ animationDelay: `${idx * 100}ms` }}
                 >
-                  <div className="relative aspect-video sm:aspect-[4/3] lg:aspect-[16/9] overflow-hidden max-h-64 sm:max-h-none">
+                  <div className="relative aspect-[4/3] lg:aspect-[16/9] w-full overflow-hidden">
                     <img
                       src={service.image}
                       alt={service.title}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 will-change-transform"
-                      style={{ imageRendering: 'auto', backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
+                      className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
                     <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-30 transition-opacity duration-500`} />

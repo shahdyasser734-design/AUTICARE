@@ -7,6 +7,7 @@ import { Alert } from '../common/Alert';
 import { useAuth } from '../../context/AuthContext';
 import { validateEmail } from '../../utils/validation';
 import { ROUTES, ROLES } from '../../utils/constants';
+import { useTheme } from '../../context/ThemeContext';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -57,11 +58,13 @@ export const LoginForm = () => {
     }
   };
 
+  const { isDark } = useTheme();
+
   return (
     <div className="w-full space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-1">Welcome Back</h2>
-        <p className="text-slate-400 text-sm">Sign in to your account to continue.</p>
+        <h2 className={`text-2xl font-bold mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>Welcome Back</h2>
+        <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Sign in to your account to continue.</p>
       </div>
 
       {alert && (
@@ -104,7 +107,7 @@ export const LoginForm = () => {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-9 text-slate-400 hover:text-slate-200 transition-colors"
+            className={`absolute right-3 top-9 transition-colors ${isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-700'}`}
             tabIndex={-1}
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -114,7 +117,7 @@ export const LoginForm = () => {
         <div className="flex justify-end">
           <Link
             to={ROUTES.FORGOT_PASSWORD}
-            className="text-xs text-slate-400 hover:text-cyan-400 transition-colors"
+            className={`text-xs transition-colors ${isDark ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-600 hover:text-blue-600'}`}
           >
             Forgot password?
           </Link>
@@ -125,16 +128,16 @@ export const LoginForm = () => {
           isLoading={loading}
           fullWidth
           size="lg"
-          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 font-semibold shadow-lg shadow-orange-500/25"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 font-semibold shadow-lg shadow-orange-500/25 text-white"
         >
           Sign In
         </Button>
 
-        <div className="text-center text-sm text-slate-400">
+        <div className={`text-center text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
           Don't have an account?{' '}
           <Link
             to={ROUTES.SIGNUP}
-            className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+            className={`font-semibold transition-colors ${isDark ? 'text-cyan-400 hover:text-cyan-300' : 'text-blue-600 hover:text-blue-700'}`}
           >
             Sign up free
           </Link>

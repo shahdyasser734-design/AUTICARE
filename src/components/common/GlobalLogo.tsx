@@ -29,7 +29,7 @@ export const GlobalLogo = ({
   return (
     <div
       className={clsx(
-        'relative flex items-center justify-center overflow-hidden rounded-full cursor-pointer transition-transform duration-500',
+        'relative flex items-center justify-center cursor-pointer transition-transform duration-500',
         clicked && 'scale-0 opacity-0',
         className
       )}
