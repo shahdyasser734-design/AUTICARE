@@ -66,31 +66,83 @@ export interface ScreeningAnalytics {
 
 export const screeningService = {
   startScreening: async (childId: string): Promise<ScreeningStartResponse> => {
-    const response = await apiClient.post<ScreeningStartResponse>('/screening/start', { childId });
-    return response.data;
+    await new Promise(r => setTimeout(r, 500));
+    return { sessionId: 'mock-session-' + Date.now() };
   },
 
   getQuestions: async (): Promise<ScreeningQuestion[]> => {
-    const response = await apiClient.get<ScreeningQuestion[]>('/screening/questions');
-    return response.data;
+    await new Promise(r => setTimeout(r, 500));
+    return [
+      {
+        id: '1',
+        question: 'Does your child look at you when you call their name?',
+        pageNumber: 1,
+        options: [
+          { id: '1_a', label: 'Always', value: 0 },
+          { id: '1_b', label: 'Sometimes', value: 1 },
+          { id: '1_c', label: 'Never', value: 2 },
+        ]
+      },
+      {
+        id: '2',
+        question: 'Does your child point to indicate that they want something?',
+        pageNumber: 1,
+        options: [
+          { id: '2_a', label: 'Always', value: 0 },
+          { id: '2_b', label: 'Sometimes', value: 1 },
+          { id: '2_c', label: 'Never', value: 2 },
+        ]
+      }
+    ];
   },
 
-  // Submit screening for a child. Backend expects { childId, answers: [{ questionId, answerValue }] }
   submitScreening: async (childId: string, answers: Array<{ questionId: string | number; answerValue: number }>): Promise<ScreeningResult> => {
-    const response = await apiClient.post<ScreeningResult>('/screening/submit', {
+    await new Promise(r => setTimeout(r, 500));
+    return {
       childId,
-      answers,
-    });
-    return response.data;
+      childName: 'Mock Child',
+      predictionClass: 'Low Risk',
+      confidenceScore: 0.95,
+      aqScore: 1,
+      riskLevel: 'Low Risk',
+      probability: '95%',
+      socialAttention: 0,
+      jointAttention: 0,
+      socialCommunication: 0,
+      language: 0,
+      imagination: 0,
+      repetitiveBehavior: 0,
+      createdAt: new Date().toISOString()
+    };
   },
 
   getResults: async (childId: string): Promise<ScreeningResult[]> => {
-    const response = await apiClient.get<ScreeningResult[]>(`/screening/results/${childId}`);
-    return response.data;
+    await new Promise(r => setTimeout(r, 500));
+    return [{
+      childId,
+      childName: 'Mock Child',
+      predictionClass: 'Low Risk',
+      confidenceScore: 0.95,
+      aqScore: 1,
+      riskLevel: 'Low Risk',
+      probability: '95%',
+      socialAttention: 0,
+      jointAttention: 0,
+      socialCommunication: 0,
+      language: 0,
+      imagination: 0,
+      repetitiveBehavior: 0,
+      createdAt: new Date().toISOString()
+    }];
   },
 
   getAnalytics: async (childId: string): Promise<ScreeningAnalytics> => {
-    const response = await apiClient.get<ScreeningAnalytics>(`/screening/analytics/${childId}`);
-    return response.data;
+    await new Promise(r => setTimeout(r, 500));
+    return {
+      totalScreenings: 1,
+      averageScore: 1,
+      riskLevelDistribution: { low: 1, medium: 0, high: 0 },
+      recentScreenings: []
+    };
   },
 };
