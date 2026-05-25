@@ -54,9 +54,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
     setLoading(true);
     try {
-      const data = await authService.login(email, password);
-      localStorage.setItem('token', data.token);
-      normalizeAndSetUser(data.user);
+      const data: any = await authService.login(email, password);
+      
+      console.log("LOGIN RESPONSE:", data);
+      console.log("TOKEN:", data?.token);
+      console.log("ROLE:", data?.user?.role || data?.role);
+      console.log("USER:", data?.user);
+      
+      localStorage.setItem('token', data?.token);
+      if (data?.role) localStorage.setItem('role', data.role);
+      localStorage.setItem('user', JSON.stringify(data?.user));
+      
+      normalizeAndSetUser(data?.user);
+      return data;
     } catch (error) {
       const errMsg = getErrorMessage(error, 'Login failed');
       setError(errMsg);

@@ -37,7 +37,7 @@ export const SignupForm = () => {
     null
   );
 
-  const { signup, loading } = useAuth();
+  const { signup, login, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (field: string, value: string) => {
@@ -147,11 +147,30 @@ export const SignupForm = () => {
       // Sign up
       await signup(payload);
 
-      // Try to navigate to login and show success message
-      setAlert({ type: 'success', message: 'Account created successfully. Redirecting to login...' });
-      setTimeout(() => {
-        navigate(ROUTES.LOGIN);
-      }, 1500);
+      // Try to auto-login
+      setAlert({ type: 'success', message: 'Account created successfully. Logging in...' });
+      
+      try {
+        const data = await login(formData.email, formData.password);
+        
+        setTimeout(() => {
+          const role = data?.role || data?.user?.role || localStorage.getItem('role') || '';
+          const normalizedRole = role.toLowerCase();
+          
+          let route = '/';
+          if (normalizedRole === 'parent') {
+            route = '/add-child';
+          } else if (normalizedRole === 'doctor' || normalizedRole === 'therapist' || normalizedRole === 'specialist') {
+            route = '/home';
+          }
+          
+          console.log("NAVIGATING TO:", route);
+          navigate(route, { replace: true });
+        }, 1000);
+      } catch (loginError) {
+        setAlert({ type: 'error', message: 'Auto-login failed. Please sign in manually.' });
+        setTimeout(() => navigate(ROUTES.LOGIN), 1500);
+      }
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : 'Signup failed. Please try again.';
       setAlert({

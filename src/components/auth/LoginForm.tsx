@@ -6,7 +6,7 @@ import { Input } from '../common/Input';
 import { Alert } from '../common/Alert';
 import { useAuth } from '../../context/useAuth';
 import { validateEmail } from '../../utils/validation';
-import { ROUTES, ROLES } from '../../utils/constants';
+import { ROUTES } from '../../utils/constants';
 import { useTheme } from '../../context/useTheme';
 
 export const LoginForm = () => {
@@ -19,11 +19,6 @@ export const LoginForm = () => {
   const { login, loading } = useAuth();
   const navigate = useNavigate();
 
-  const getRoleHome = (role?: string) => {
-    if (role === ROLES.DOCTOR)     return ROUTES.DOCTOR_HOME;
-    if (role === ROLES.THERAPIST)  return ROUTES.THERAPIST_HOME;
-    return ROUTES.PARENT_HOME; // parent — ProtectedRoute handles screening redirect
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,28 +37,22 @@ export const LoginForm = () => {
     }
 
     try {
-      await login(email, password);
+      const data = await login(email, password);
       setAlert({ type: 'success', message: 'Login successful! Redirecting...' });
-      // Give auth context time to update user, then navigate
-      setTimeout(async () => {
-        const storedUser = localStorage.getItem('user');
-        const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+      
+      setTimeout(() => {
+        const role = data?.role || data?.user?.role || localStorage.getItem('role') || '';
+        const normalizedRole = role.toLowerCase();
         
-        if (parsedUser?.role === ROLES.PARENT) {
-          try {
-            // Check if parent has any children
-            const { childrenService } = await import('../../services/childrenService');
-            const children = await childrenService.getChildren();
-            if (!children || children.length === 0) {
-              navigate(ROUTES.PARENT_ADD_CHILD, { replace: true });
-              return;
-            }
-          } catch (e) {
-            console.error('Failed to fetch children on login:', e);
-          }
+        let route = '/';
+        if (normalizedRole === 'parent') {
+          route = '/add-child';
+        } else if (normalizedRole === 'doctor' || normalizedRole === 'therapist' || normalizedRole === 'specialist') {
+          route = '/home';
         }
         
-        navigate(getRoleHome(parsedUser?.role), { replace: true });
+        console.log("NAVIGATING TO:", route);
+        navigate(route, { replace: true });
       }, 300);
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : 'Login failed. Please check your credentials.';
