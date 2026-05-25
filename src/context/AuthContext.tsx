@@ -22,6 +22,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const userWithRole = { ...currentUser, role: mappedRole } as User;
     setUser(userWithRole);
     localStorage.setItem('user', JSON.stringify(userWithRole));
+    localStorage.setItem('userId', userWithRole.id);
+    localStorage.setItem('role', userWithRole.role);
   };
 
   useEffect(() => {

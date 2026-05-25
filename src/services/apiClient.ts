@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosError } from 'axios';
 
-const DEFAULT_API_BASE = 'https://auticare-production-828c.up.railway.app/api';
+const DEFAULT_API_BASE = '/api';
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || DEFAULT_API_BASE;
 
 console.log('API Base URL:', API_BASE_URL);

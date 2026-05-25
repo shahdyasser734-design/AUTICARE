@@ -1,55 +1,8 @@
-// Screening API Types
-export interface ScreeningQuestion {
-  id: string;
-  question: string;
-  description?: string;
-  pageNumber: number;
-  options: ScreeningOption[];
-}
-
-export interface ScreeningOption {
-  id: string;
-  label: string;
-  value: number;
-}
-
-export interface ScreeningAnswer {
-  questionId: string;
-  optionId: string;
-  value: number;
-}
-
-export interface ScreeningStartRequest {
-  childId: string;
-}
-
-export interface ScreeningStartResponse {
-  sessionId: string;
-  questions?: ScreeningQuestion[];
-}
-
-export interface ScreeningSubmitRequest {
-  sessionId: string;
-  answers: ScreeningAnswer[];
-}
-
-export interface ScreeningResult {
-  sessionId?: string;
-  childId?: string;
-  childName: string;
-  predictionClass: string;
-  confidenceScore: number;
-  aqScore: number;
-  riskLevel: string;
-  probability: string;
-  socialAttention: number;
-  jointAttention: number;
-  socialCommunication: number;
-  language: number;
-  imagination: number;
-  repetitiveBehavior: number;
-  createdAt: string;
-}
+import apiClient from '../apiClient';
+import type {
+  ScreeningQuestion,
+  ScreeningResult,
+} from '../../types';
 
 export interface ScreeningAnalytics {
   totalScreenings: number;
@@ -62,86 +15,37 @@ export interface ScreeningAnalytics {
   recentScreenings: ScreeningResult[];
 }
 
+export interface ScreeningStartResponse {
+  sessionId: string;
+  questions?: ScreeningQuestion[];
+}
+
 export const screeningService = {
   startScreening: async (childId: string): Promise<ScreeningStartResponse> => {
-    await new Promise(r => setTimeout(r, 500));
-    return { sessionId: `mock-session-${childId}-${Date.now()}` };
+    const response = await apiClient.post<ScreeningStartResponse>('/screening/start', {
+      childId,
+    });
+    return response.data;
   },
 
   getQuestions: async (): Promise<ScreeningQuestion[]> => {
-    await new Promise(r => setTimeout(r, 500));
-    return [
-      {
-        id: '1',
-        question: 'Does your child look at you when you call their name?',
-        pageNumber: 1,
-        options: [
-          { id: '1_a', label: 'Always', value: 0 },
-          { id: '1_b', label: 'Sometimes', value: 1 },
-          { id: '1_c', label: 'Never', value: 2 },
-        ]
-      },
-      {
-        id: '2',
-        question: 'Does your child point to indicate that they want something?',
-        pageNumber: 1,
-        options: [
-          { id: '2_a', label: 'Always', value: 0 },
-          { id: '2_b', label: 'Sometimes', value: 1 },
-          { id: '2_c', label: 'Never', value: 2 },
-        ]
-      }
-    ];
+    const response = await apiClient.get<ScreeningQuestion[]>('/screening/questions');
+    return response.data;
   },
 
-  submitScreening: async (childId: string, answers: Record<string, number>): Promise<ScreeningResult> => {
-    await new Promise(r => setTimeout(r, 500));
-    const totalAnswerValue = Object.values(answers).reduce((sum, value) => sum + value, 0);
-    return {
-      childId,
-      childName: 'Mock Child',
-      predictionClass: 'Low Risk',
-      confidenceScore: 0.95,
-      aqScore: totalAnswerValue,
-      riskLevel: 'Low Risk',
-      probability: '95%',
-      socialAttention: 0,
-      jointAttention: 0,
-      socialCommunication: 0,
-      language: 0,
-      imagination: 0,
-      repetitiveBehavior: 0,
-      createdAt: new Date().toISOString()
-    };
+  submitScreening: async (_childId: string, answers: Record<string, number>): Promise<ScreeningResult> => {
+    const response = await apiClient.post<ScreeningResult>('/screening/submit', answers);
+    return response.data;
   },
 
   getResults: async (childId: string): Promise<ScreeningResult[]> => {
-    await new Promise(r => setTimeout(r, 500));
-    return [{
-      childId,
-      childName: 'Mock Child',
-      predictionClass: 'Low Risk',
-      confidenceScore: 0.95,
-      aqScore: 1,
-      riskLevel: 'Low Risk',
-      probability: '95%',
-      socialAttention: 0,
-      jointAttention: 0,
-      socialCommunication: 0,
-      language: 0,
-      imagination: 0,
-      repetitiveBehavior: 0,
-      createdAt: new Date().toISOString()
-    }];
+    const response = await apiClient.get<ScreeningResult | ScreeningResult[]>(`/screening/results/${childId}`);
+    const data = response.data;
+    return Array.isArray(data) ? data : [data];
   },
 
   getAnalytics: async (childId: string): Promise<ScreeningAnalytics> => {
-    await new Promise(r => setTimeout(r, 500));
-    return {
-      totalScreenings: childId ? 1 : 0,
-      averageScore: 1,
-      riskLevelDistribution: { low: 1, medium: 0, high: 0 },
-      recentScreenings: []
-    };
+    const response = await apiClient.get<ScreeningAnalytics>(`/screening/analytics/${childId}`);
+    return response.data;
   },
 };

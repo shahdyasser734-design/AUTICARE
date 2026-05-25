@@ -1,2 +1,2 @@
-export { mockChildrenService as childrenService } from '../mockChildrenService';
+export { childrenService } from '../childrenService';
 export type { Child } from '../childrenService';

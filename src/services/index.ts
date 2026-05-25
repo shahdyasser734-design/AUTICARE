@@ -1,9 +1,9 @@
-export { mockAuthService as authService } from './mockAuthService';
+export { authService } from './authService';
 export { userService } from './userService';
 export { patientService } from './patientService';
 export { sessionService } from './sessionService';
-export { mockTestService as testService, mockTestService as screeningService } from './mockTestService';
-export { mockChildrenService as childrenService } from './mockChildrenService';
+export { testService, screeningService } from './testService';
+export { childrenService } from './childrenService';
 
 export { chatService } from './chatService';
 export { notificationService } from './notificationService';

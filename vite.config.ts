@@ -17,5 +17,13 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: false,
+    proxy: {
+      '/api': {
+        target: 'https://auticare-production-828c.up.railway.app',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path,
+      },
+    },
   },
 })
