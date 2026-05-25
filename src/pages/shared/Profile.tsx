@@ -57,7 +57,7 @@ export const Profile = () => {
         <Card>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-6">
-              <Avatar name={user?.name || ''} size="xl" src={user?.profileImage} />
+              <Avatar name={user?.name || ''} size="xl" image={user?.profileImage} />
               <div>
                 <h2 className="text-2xl font-bold text-neutral-900">{user?.name}</h2>
                 <p className="text-neutral-600 capitalize">{user?.role}</p>
@@ -146,7 +146,7 @@ export const Profile = () => {
               <Input
                 label="License Number"
                 placeholder="Enter license number"
-                onChange={(e) => {
+                onChange={(_e) => {
                   // In a real app we'd bind this to state
                 }}
                 id="licenseInput"

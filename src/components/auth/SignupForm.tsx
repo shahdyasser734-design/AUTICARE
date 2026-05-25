@@ -37,7 +37,7 @@ export const SignupForm = () => {
     null
   );
 
-  const { signup, login, loading } = useAuth();
+  const { signup, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (field: string, value: string) => {
