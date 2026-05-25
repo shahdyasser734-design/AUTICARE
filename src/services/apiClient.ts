@@ -1,10 +1,8 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosError } from 'axios';
 
-const DEFAULT_API_BASE = '/api';
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || DEFAULT_API_BASE;
-
-console.log('API Base URL:', API_BASE_URL);
+const envApi = (import.meta.env.VITE_API_URL as string) || 'https://auticare-production-828c.up.railway.app/api';
+export const API_BASE_URL = import.meta.env.DEV ? '/api' : envApi;
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -77,10 +75,10 @@ apiClient.interceptors.response.use(
       }
 
       if (status === 401) {
-        // Token expired or invalid
+        // Token expired or invalid — clear auth but do NOT perform a forced redirect here.
+        // Let calling code handle navigation so registering users aren't redirected to login.
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
       } else if (status === 403) {
         console.error('Forbidden action:', apiMessage);
       } else if (status === 404) {

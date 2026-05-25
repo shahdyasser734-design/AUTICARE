@@ -55,13 +55,43 @@ export const Profile = () => {
 
         {/* Avatar */}
         <Card>
-          <div className="flex items-center gap-6">
-            <Avatar name={user?.name || ''} size="xl" />
-            <div>
-              <h2 className="text-2xl font-bold text-neutral-900">{user?.name}</h2>
-              <p className="text-neutral-600 capitalize">{user?.role}</p>
-              <p className="text-neutral-600">{user?.email}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-6">
+              <Avatar name={user?.name || ''} size="xl" src={user?.profileImage} />
+              <div>
+                <h2 className="text-2xl font-bold text-neutral-900">{user?.name}</h2>
+                <p className="text-neutral-600 capitalize">{user?.role}</p>
+                <p className="text-neutral-600">{user?.email}</p>
+              </div>
             </div>
+            {isEditing && (
+              <div className="w-1/2">
+                <p className="text-sm font-medium mb-2">Update Picture</p>
+                <input
+                  type="file"
+                  accept="image/png, image/jpeg, image/jpg"
+                  onChange={async (e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setSaving(true);
+                      try {
+                        await profileService.updateProfilePicture(e.target.files[0]);
+                        setAlert({ type: 'success', message: 'Profile picture updated successfully!' });
+                      } catch (err) {
+                        setAlert({ type: 'error', message: 'Failed to update profile picture.' });
+                      } finally {
+                        setSaving(false);
+                      }
+                    }
+                  }}
+                  className="block w-full text-sm text-slate-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100"
+                />
+              </div>
+            )}
           </div>
         </Card>
 
@@ -107,6 +137,50 @@ export const Profile = () => {
             )}
           </div>
         </Card>
+
+        {/* License Upload for Doctor/Therapist */}
+        {(user?.role === 'doctor' || user?.role === 'therapist') && (
+          <Card>
+            <h3 className="text-xl font-bold text-neutral-900 mb-6">Professional Credentials</h3>
+            <div className="space-y-4">
+              <Input
+                label="License Number"
+                placeholder="Enter license number"
+                onChange={(e) => {
+                  // In a real app we'd bind this to state
+                }}
+                id="licenseInput"
+              />
+              <div>
+                <p className="text-sm font-medium mb-2">Upload License Document</p>
+                <input
+                  type="file"
+                  accept=".pdf, image/png, image/jpeg, image/jpg"
+                  onChange={async (e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      const licenseNumber = (document.getElementById('licenseInput') as HTMLInputElement)?.value || 'UNKNOWN';
+                      setSaving(true);
+                      try {
+                        await profileService.updateLicense(licenseNumber, e.target.files[0]);
+                        setAlert({ type: 'success', message: 'License uploaded successfully!' });
+                      } catch (err) {
+                        setAlert({ type: 'error', message: 'Failed to upload license.' });
+                      } finally {
+                        setSaving(false);
+                      }
+                    }
+                  }}
+                  className="block w-full text-sm text-slate-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100"
+                />
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Account Information */}
         <Card>

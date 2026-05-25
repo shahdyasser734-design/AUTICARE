@@ -47,7 +47,9 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
       ],
     };
 
-    return [...(roleItems[user.role] || []), ...baseItems];
+    const roleKey = (user?.role || '') as keyof typeof roleItems | '';
+    const roleMenu = roleKey ? roleItems[roleKey] || [] : [];
+    return [...roleMenu, ...baseItems];
   };
 
   const isActive = (href: string) => location.pathname === href;

@@ -146,14 +146,12 @@ export const SignupForm = () => {
 
       // Sign up
       await signup(payload);
-      
-      // Automatically login after signup
-      await login(formData.email, formData.password);
-      
-      setAlert({ type: 'success', message: 'Account created successfully!' });
-      // Navigate according to role
-      if (formData.role === ROLES.PARENT) navigate(ROUTES.PARENT_HOME);
-      else navigate(ROUTES.DOCTOR_HOME);
+
+      // Try to navigate to login and show success message
+      setAlert({ type: 'success', message: 'Account created successfully. Redirecting to login...' });
+      setTimeout(() => {
+        navigate(ROUTES.LOGIN);
+      }, 1500);
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : 'Signup failed. Please try again.';
       setAlert({

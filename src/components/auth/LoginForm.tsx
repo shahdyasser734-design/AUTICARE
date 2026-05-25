@@ -45,9 +45,24 @@ export const LoginForm = () => {
       await login(email, password);
       setAlert({ type: 'success', message: 'Login successful! Redirecting...' });
       // Give auth context time to update user, then navigate
-      setTimeout(() => {
+      setTimeout(async () => {
         const storedUser = localStorage.getItem('user');
         const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+        
+        if (parsedUser?.role === ROLES.PARENT) {
+          try {
+            // Check if parent has any children
+            const { childrenService } = await import('../../services/childrenService');
+            const children = await childrenService.getChildren();
+            if (!children || children.length === 0) {
+              navigate(ROUTES.PARENT_ADD_CHILD, { replace: true });
+              return;
+            }
+          } catch (e) {
+            console.error('Failed to fetch children on login:', e);
+          }
+        }
+        
         navigate(getRoleHome(parsedUser?.role), { replace: true });
       }, 300);
     } catch (error) {

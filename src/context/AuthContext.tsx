@@ -16,14 +16,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const normalizeAndSetUser = (currentUser: User) => {
-    const normalizedRole = (currentUser.role || '').toLowerCase();
+  const normalizeAndSetUser = (currentUser: User | null) => {
+    if (!currentUser) return;
+    const normalizedRole = ((currentUser.role || '') as string).toLowerCase();
     const mappedRole = normalizedRole === 'specialist' ? 'doctor' : normalizedRole;
     const userWithRole = { ...currentUser, role: mappedRole } as User;
     setUser(userWithRole);
     localStorage.setItem('user', JSON.stringify(userWithRole));
-    localStorage.setItem('userId', userWithRole.id);
-    localStorage.setItem('role', userWithRole.role);
+    localStorage.setItem('userId', String(userWithRole.id));
+    localStorage.setItem('role', userWithRole.role || '');
   };
 
   useEffect(() => {
