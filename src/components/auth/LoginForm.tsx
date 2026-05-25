@@ -44,15 +44,18 @@ export const LoginForm = () => {
         const role = data?.role || data?.user?.role || localStorage.getItem('role') || '';
         const normalizedRole = role.toLowerCase();
         
-        let route = '/';
+        let targetRoute = ROUTES.ROOT;
         if (normalizedRole === 'parent') {
-          route = '/add-child';
-        } else if (normalizedRole === 'doctor' || normalizedRole === 'therapist' || normalizedRole === 'specialist') {
-          route = '/home';
+          targetRoute = ROUTES.PARENT_ADD_CHILD;
+        } else if (normalizedRole === 'doctor' || normalizedRole === 'specialist') {
+          targetRoute = ROUTES.DOCTOR_HOME;
+        } else if (normalizedRole === 'therapist') {
+          targetRoute = ROUTES.THERAPIST_HOME;
         }
         
-        console.log("NAVIGATING TO:", route);
-        navigate(route, { replace: true });
+        console.log("AVAILABLE ROUTES:", ROUTES);
+        console.log("NAVIGATING TO:", targetRoute);
+        navigate(targetRoute, { replace: true });
       }, 300);
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : 'Login failed. Please check your credentials.';
