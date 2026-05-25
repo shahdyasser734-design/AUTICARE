@@ -1,8 +1,8 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosError } from 'axios';
 
-const envApi = (import.meta.env.VITE_API_URL as string) || 'https://auticare-production-828c.up.railway.app/api';
-export const API_BASE_URL = import.meta.env.DEV ? '/api' : envApi;
+const envApi = (import.meta.env.VITE_API_URL as string) || '/api';
+export const API_BASE_URL = '/api';
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
