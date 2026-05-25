@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Download } from 'lucide-react';
 import { MainLayout } from '../../layouts/MainLayout';
 import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
@@ -8,6 +9,45 @@ import { ROUTES } from '../../utils/constants';
 import { screeningService } from '../../services/api/screening';
 import type { ScreeningResult } from '../../types';
 import { LoadingSpinner } from '../../components/common/Loading';
+
+const generatePDF = (result: ScreeningResult) => {
+  const childName = localStorage.getItem('latestChildName') || result.childName || 'Child';
+  const createdAt = result.createdAt ? new Date(result.createdAt).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB');
+  
+  let content = `AUTISM SCREENING REPORT\n`;
+  content += `\n`;
+  content += `Child Name: ${childName}\n`;
+  content += `Created At: ${createdAt}\n`;
+  content += `\n`;
+  content += `===========================\n`;
+  content += `RESULTS\n`;
+  content += `===========================\n`;
+  content += `\n`;
+  content += `Prediction Class: ${result.predictionClass}\n`;
+  content += `Confidence Score: ${result.confidenceScore}%\n`;
+  content += `AQ Score: ${result.aqScore}\n`;
+  content += `Risk Level: ${result.riskLevel}\n`;
+  content += `Probability: ${result.probability}\n`;
+  content += `\n`;
+  content += `===========================\n`;
+  content += `BEHAVIORAL CATEGORIES\n`;
+  content += `===========================\n`;
+  content += `\n`;
+  content += `Social Attention: ${result.socialAttention}%\n`;
+  content += `Joint Attention: ${result.jointAttention}%\n`;
+  content += `Social Communication: ${result.socialCommunication}%\n`;
+  content += `Language: ${result.language}%\n`;
+  content += `Imagination: ${result.imagination}%\n`;
+  content += `Repetitive Behavior: ${result.repetitiveBehavior}%\n`;
+
+  const element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+  element.setAttribute('download', `screening-report-${childName.replace(/\s+/g, '-')}.pdf`);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+};
 
 export const ParentScreeningResults = () => {
   const navigate = useNavigate();
@@ -47,20 +87,20 @@ export const ParentScreeningResults = () => {
 
   return (
     <MainLayout>
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-4xl font-bold text-navy-900 mb-2">Screening Results</h1>
-          <p className="text-navy-500">
-            Comprehensive medical-grade analysis of your child's screening session
+      <div className="max-w-5xl mx-auto space-y-8">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Screening Results</h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            Comprehensive autism spectrum assessment
           </p>
         </div>
 
         {!result ? (
-          <Card className="bg-white border-none shadow-xl rounded-3xl">
+          <Card className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-white/10 shadow-lg rounded-3xl">
             <div className="text-center py-16 space-y-6">
               <div className="text-6xl">📋</div>
-              <p className="text-navy-600 text-lg">No screening results found.</p>
-              <Button onClick={() => navigate(ROUTES.PARENT_SCREENING)} className="bg-orange-500 hover:bg-orange-600 px-8 py-3">
+              <p className="text-slate-700 dark:text-slate-300 text-lg font-medium">No screening results found.</p>
+              <Button onClick={() => navigate(ROUTES.PARENT_SCREENING)} className="bg-orange-600 hover:bg-orange-700 px-8 py-3 text-white font-medium">
                 Start Screening Now
               </Button>
             </div>
@@ -69,19 +109,26 @@ export const ParentScreeningResults = () => {
           <div className="space-y-8">
             <ResultsSummary result={result} />
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-soft-gray mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Button
+                onClick={() => generatePDF(result)}
+                className="flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg shadow-blue-500/25 rounded-2xl"
+              >
+                <Download size={20} />
+                Export to PDF
+              </Button>
               <Button
                 variant="outline"
-                className="flex-1 py-4 text-navy-700 border-navy-200 hover:bg-navy-50"
+                className="py-4 text-slate-700 dark:text-slate-200 border-2 border-slate-300 dark:border-white/20 hover:bg-slate-100 dark:hover:bg-slate-800/50 font-semibold rounded-2xl"
                 onClick={() => navigate(ROUTES.PARENT_RE_SCREENING)}
               >
                 Take Screening Again
               </Button>
               <Button 
-                className="flex-1 py-4 bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/25"
+                className="py-4 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold shadow-lg shadow-orange-500/25 rounded-2xl"
                 onClick={() => navigate(ROUTES.PARENT_BOOK_SPECIALIST)}
               >
-                Go to Specialists Page
+                Book Specialist
               </Button>
             </div>
           </div>

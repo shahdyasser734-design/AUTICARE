@@ -30,8 +30,8 @@ const LOCAL_QUESTIONS: IScreeningQuestion[] = [
     description: '',
     pageNumber: 2,
     options: [
-      { id: 'q2_easy',      label: 'Easy',      value: 1 },
-      { id: 'q2_difficult', label: 'Difficult', value: 0 },
+      { id: 'q2_yes', label: 'Yes', value: 1 },
+      { id: 'q2_no',  label: 'No',  value: 0 },
     ],
   },
   {
@@ -90,8 +90,8 @@ const LOCAL_QUESTIONS: IScreeningQuestion[] = [
     description: '',
     pageNumber: 8,
     options: [
-      { id: 'q8_yes', label: 'YES (simple words like mama, bye)', value: 1 },
-      { id: 'q8_no',  label: 'NO (more complex words or phrases)', value: 0 },
+      { id: 'q8_yes', label: 'Yes', value: 1 },
+      { id: 'q8_no',  label: 'No',  value: 0 },
     ],
   },
   {

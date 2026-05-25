@@ -21,29 +21,29 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
     if (!user) return [];
 
     const baseItems = [
-      { label: 'Notifications', href: ROUTES.NOTIFICATIONS, icon: '🔔' },
-      { label: 'Chat', href: ROUTES.CHAT, icon: '💬' },
-      { label: 'Settings', href: ROUTES.SETTINGS, icon: '⚙️' },
-      { label: 'Profile', href: ROUTES.PROFILE, icon: '👤' },
+      { label: 'Notifications', href: ROUTES.NOTIFICATIONS },
+      { label: 'Chat', href: ROUTES.CHAT },
+      { label: 'Settings', href: ROUTES.SETTINGS },
+      { label: 'Profile', href: ROUTES.PROFILE },
     ];
 
     const roleItems = {
       [ROLES.PARENT]: [
-        { label: 'Home', href: ROUTES.PARENT_HOME, icon: '🏠' },
-        { label: 'Autism Screening', href: ROUTES.PARENT_SCREENING, icon: '📋' },
-        { label: 'Screening Results', href: ROUTES.PARENT_SCREENING_RESULTS, icon: '📊' },
-        { label: 'Book Specialist', href: ROUTES.PARENT_BOOK_SPECIALIST, icon: '👨‍⚕️' },
-        { label: 'Sessions', href: ROUTES.PARENT_SESSIONS, icon: '📅' },
+        { label: 'Home', href: ROUTES.PARENT_HOME },
+        { label: 'Autism Screening', href: ROUTES.PARENT_SCREENING },
+        { label: 'Screening Results', href: ROUTES.PARENT_SCREENING_RESULTS },
+        { label: 'Book Specialist', href: ROUTES.PARENT_BOOK_SPECIALIST },
+        { label: 'Sessions', href: ROUTES.PARENT_SESSIONS },
       ],
       [ROLES.DOCTOR]: [
-        { label: 'Home', href: ROUTES.DOCTOR_HOME, icon: '🏠' },
-        { label: 'Sessions', href: ROUTES.DOCTOR_SESSIONS, icon: '📅' },
-        { label: 'Patients', href: ROUTES.DOCTOR_PATIENTS, icon: '👥' },
+        { label: 'Home', href: ROUTES.DOCTOR_HOME },
+        { label: 'Sessions', href: ROUTES.DOCTOR_SESSIONS },
+        { label: 'Patients', href: ROUTES.DOCTOR_PATIENTS },
       ],
       [ROLES.THERAPIST]: [
-        { label: 'Home', href: ROUTES.THERAPIST_HOME, icon: '🏠' },
-        { label: 'Sessions', href: ROUTES.THERAPIST_SESSIONS, icon: '📅' },
-        { label: 'Patients', href: ROUTES.THERAPIST_PATIENTS, icon: '👥' },
+        { label: 'Home', href: ROUTES.THERAPIST_HOME },
+        { label: 'Sessions', href: ROUTES.THERAPIST_SESSIONS },
+        { label: 'Patients', href: ROUTES.THERAPIST_PATIENTS },
       ],
     };
 
@@ -132,7 +132,6 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 )}
               >
-                <span className="text-xl">{item.icon}</span>
                 <span className="font-medium">{item.label}</span>
               </Link>
             ))}

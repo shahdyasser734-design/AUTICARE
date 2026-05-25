@@ -78,6 +78,13 @@ export const SignupForm = () => {
       newErrors.phone = 'Please enter a phone number';
     }
 
+    // Validate National ID for all roles
+    if (!formData.nationalId) {
+      newErrors.nationalId = 'National ID is required';
+    } else if (!/^\d{14}$/.test(formData.nationalId)) {
+      newErrors.nationalId = 'National ID must be exactly 14 digits';
+    }
+
     // Validate doctor/therapist fields
     if (formData.role === ROLES.DOCTOR || formData.role === ROLES.THERAPIST) {
       if (!formData.yearsOfExperience) {
@@ -112,6 +119,7 @@ export const SignupForm = () => {
         password: formData.password,
         role: formData.role === ROLES.DOCTOR ? 'Specialist' : (formData.role as string).charAt(0).toUpperCase() + (formData.role as string).slice(1),
         phone: formData.phone,
+        nationalId: formData.nationalId,
       };
 
       if (formData.role === ROLES.DOCTOR || formData.role === ROLES.THERAPIST) {
@@ -216,6 +224,20 @@ export const SignupForm = () => {
           fullWidth
         />
 
+        <Input
+          label="National ID"
+          placeholder="30201012233445"
+          value={formData.nationalId}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, '').slice(0, 14);
+            handleChange('nationalId', value);
+          }}
+          error={errors.nationalId}
+          hint="14 digits required"
+          fullWidth
+          required
+        />
+
         {(formData.role === ROLES.DOCTOR || formData.role === ROLES.THERAPIST) && (
           <div className={`space-y-5 p-5 rounded-lg border ${
             isDark ? 'border-slate-700 bg-slate-800/30' : 'border-slate-200 bg-slate-50'
@@ -258,14 +280,6 @@ export const SignupForm = () => {
               placeholder="LIC-2026-001"
               value={formData.licenseNumber}
               onChange={(e) => handleChange('licenseNumber', e.target.value)}
-              fullWidth
-            />
-
-            <Input
-              label="National ID"
-              placeholder="30201012233445"
-              value={formData.nationalId}
-              onChange={(e) => handleChange('nationalId', e.target.value)}
               fullWidth
             />
 
