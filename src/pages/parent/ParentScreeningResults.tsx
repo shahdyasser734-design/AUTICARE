@@ -1,138 +1,299 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Download } from 'lucide-react';
+import { Download, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
 import { MainLayout } from '../../layouts/MainLayout';
 import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
-import { ResultsSummary } from '../../components/screening/ResultsComponents';
 import { ROUTES } from '../../utils/constants';
 import { screeningService } from '../../services/api/screening';
 import type { ScreeningResult } from '../../types';
 import { LoadingSpinner } from '../../components/common/Loading';
 
-const generatePDF = (result: ScreeningResult) => {
-  const childName = localStorage.getItem('latestChildName') || result.childName || 'Child';
-  const createdAt = result.createdAt ? new Date(result.createdAt).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB');
-  
-  let content = `AUTISM SCREENING REPORT\n`;
-  content += `\n`;
-  content += `Child Name: ${childName}\n`;
-  content += `Created At: ${createdAt}\n`;
-  content += `\n`;
-  content += `===========================\n`;
-  content += `RESULTS\n`;
-  content += `===========================\n`;
-  content += `\n`;
-  content += `Prediction Class: ${result.predictionClass}\n`;
-  content += `Confidence Score: ${result.confidenceScore}%\n`;
-  content += `AQ Score: ${result.aqScore}\n`;
-  content += `Risk Level: ${result.riskLevel}\n`;
-  content += `Probability: ${result.probability}\n`;
-  content += `\n`;
-  content += `===========================\n`;
-  content += `BEHAVIORAL CATEGORIES\n`;
-  content += `===========================\n`;
-  content += `\n`;
-  content += `Social Attention: ${result.socialAttention}%\n`;
-  content += `Joint Attention: ${result.jointAttention}%\n`;
-  content += `Social Communication: ${result.socialCommunication}%\n`;
-  content += `Language: ${result.language}%\n`;
-  content += `Imagination: ${result.imagination}%\n`;
-  content += `Repetitive Behavior: ${result.repetitiveBehavior}%\n`;
+// ---------------------------------------------------------------------------
+// Helper: build a normalised ScreeningResult from whatever the backend returns
+// Backend contract: { predictionClass, confidenceScore, createdAt }
+// All extra fields default to sensible values so the existing UI never crashes.
+// ---------------------------------------------------------------------------
+const normaliseResult = (raw: Record<string, unknown>, childName: string): ScreeningResult => {
+  const predictionClass = String(raw.predictionClass ?? raw.prediction_class ?? 'NO');
+  const confidenceScore = Number(raw.confidenceScore ?? raw.confidence_score ?? 0);
+  const isPositive = predictionClass.toUpperCase() === 'YES';
 
-  const element = document.createElement('a');
-  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-  element.setAttribute('download', `screening-report-${childName.replace(/\s+/g, '-')}.pdf`);
-  element.style.display = 'none';
-  document.body.appendChild(element);
-  element.click();
-  document.body.removeChild(element);
+  return {
+    childName,
+    predictionClass: isPositive ? 'ASD Positive' : 'ASD Negative',
+    confidenceScore: Math.round(confidenceScore * 100 * 100) / 100, // fraction → percentage
+    aqScore: Number(raw.aqScore ?? raw.aq_score ?? 0),
+    riskLevel: String(raw.riskLevel ?? raw.risk_level ?? (isPositive ? 'high' : 'low')),
+    probability: String(raw.probability ?? `${(confidenceScore * 100).toFixed(2)}%`),
+    socialAttention:     Number(raw.socialAttention     ?? raw.social_attention     ?? 0),
+    jointAttention:      Number(raw.jointAttention      ?? raw.joint_attention      ?? 0),
+    socialCommunication: Number(raw.socialCommunication ?? raw.social_communication ?? 0),
+    language:            Number(raw.language            ?? 0),
+    imagination:         Number(raw.imagination         ?? 0),
+    repetitiveBehavior:  Number(raw.repetitiveBehavior  ?? raw.repetitive_behavior  ?? 0),
+    createdAt: String(raw.createdAt ?? raw.created_at ?? new Date().toISOString()),
+  };
 };
 
+// ---------------------------------------------------------------------------
+// Simple PDF export
+// ---------------------------------------------------------------------------
+const exportPDF = (result: ScreeningResult) => {
+  const childName = result.childName || localStorage.getItem('latestChildName') || 'Child';
+  const date = result.createdAt
+    ? new Date(result.createdAt).toLocaleDateString('en-GB')
+    : new Date().toLocaleDateString('en-GB');
+
+  const lines = [
+    'AUTISM SCREENING REPORT',
+    '',
+    `Child Name:        ${childName}`,
+    `Date:              ${date}`,
+    '',
+    '===========================',
+    'AI PREDICTION RESULT',
+    '===========================',
+    `Prediction:        ${result.predictionClass}`,
+    `Confidence Score:  ${result.confidenceScore}%`,
+    `Risk Level:        ${result.riskLevel.toUpperCase()}`,
+    '',
+    '===========================',
+    'RECOMMENDATION',
+    '===========================',
+    result.predictionClass.toLowerCase().includes('positive')
+      ? 'We recommend consulting a specialist as soon as possible.'
+      : 'No immediate concern detected. Continue regular developmental monitoring.',
+  ].join('\n');
+
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(lines);
+  a.download = `screening-report-${childName.replace(/\s+/g, '-')}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export const ParentScreeningResults = () => {
   const navigate = useNavigate();
   const [result, setResult] = useState<ScreeningResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [childId, setChildId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchResults = async () => {
+    const load = async () => {
       try {
         const params = new URLSearchParams(window.location.search);
-        const childId = params.get('childId');
-        if (!childId) {
-          setResult(null);
-          return;
+        const id = params.get('childId') || localStorage.getItem('latestChildId');
+        setChildId(id);
+
+        const childName = localStorage.getItem('latestChildName') || 'Child';
+
+        // ── 1. Try the cached result from the submit response (fastest path) ──
+        if (id) {
+          const cached = localStorage.getItem(`screeningResult_${id}`);
+          if (cached && cached !== 'undefined') {
+            try {
+              const raw = JSON.parse(cached) as Record<string, unknown>;
+              console.log('Using cached screening result:', raw);
+              setResult(normaliseResult(raw, childName));
+              return; // no network call needed
+            } catch {
+              // corrupt cache — fall through to API
+            }
+          }
         }
-        const data = await screeningService.getResults(childId);
-        if (data.length > 0) setResult(data[0]);
+
+        // ── 2. Fallback: fetch from backend ──
+        if (id) {
+          const data = await screeningService.getResults(id);
+          if (data && data.length > 0) {
+            const raw = data[0] as unknown as Record<string, unknown>;
+            setResult(normaliseResult(raw, childName));
+          }
+        }
       } catch (err) {
-        console.error('Error fetching results:', err);
+        console.error('Error loading screening results:', err);
       } finally {
         setLoading(false);
       }
     };
-    fetchResults();
+
+    void load();
   }, []);
 
+  // ── Loading ──────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <MainLayout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
           <LoadingSpinner />
-          <p className="mt-4 text-navy-600 font-medium">Loading your comprehensive results...</p>
+          <p className="text-slate-500 dark:text-slate-400 animate-pulse font-medium">
+            Loading your results…
+          </p>
         </div>
       </MainLayout>
     );
   }
 
-  return (
-    <MainLayout>
-      <div className="max-w-5xl mx-auto space-y-8">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Screening Results</h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Comprehensive autism spectrum assessment
-          </p>
-        </div>
-
-        {!result ? (
-          <Card className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-white/10 shadow-lg rounded-3xl">
-            <div className="text-center py-16 space-y-6">
+  // ── No result found ───────────────────────────────────────────────────────
+  if (!result) {
+    return (
+      <MainLayout>
+        <div className="max-w-lg mx-auto">
+          <Card className="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 shadow-lg rounded-3xl">
+            <div className="text-center py-16 space-y-6 px-8">
               <div className="text-6xl">📋</div>
-              <p className="text-slate-700 dark:text-slate-300 text-lg font-medium">No screening results found.</p>
-              <Button onClick={() => navigate(ROUTES.PARENT_SCREENING)} className="bg-orange-600 hover:bg-orange-700 px-8 py-3 text-white font-medium">
-                Start Screening Now
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                No results found
+              </h2>
+              <p className="text-slate-600 dark:text-slate-400">
+                We couldn't find a completed screening for this child.
+              </p>
+              <Button
+                onClick={() => navigate(ROUTES.PARENT_ADD_CHILD)}
+                className="bg-orange-600 hover:bg-orange-700 px-8 py-3 text-white font-semibold"
+              >
+                Start Screening
               </Button>
             </div>
           </Card>
-        ) : (
-          <div className="space-y-8">
-            <ResultsSummary result={result} />
+        </div>
+      </MainLayout>
+    );
+  }
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Button
-                onClick={() => generatePDF(result)}
-                className="flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg shadow-blue-500/25 rounded-2xl"
+  const isPositive = result.predictionClass.toLowerCase().includes('positive');
+  const date = result.createdAt
+    ? new Date(result.createdAt).toLocaleDateString('en-GB', {
+        day: '2-digit', month: 'long', year: 'numeric',
+      })
+    : new Date().toLocaleDateString('en-GB');
+
+  const recommendation = isPositive
+    ? 'Based on the screening results, we recommend scheduling an appointment with a specialist for a comprehensive clinical evaluation as soon as possible.'
+    : 'The screening results show no immediate indicators of ASD. Continue regular developmental check-ups and monitoring.';
+
+  // ── Result UI ─────────────────────────────────────────────────────────────
+  return (
+    <MainLayout>
+      <div className="max-w-4xl mx-auto space-y-6 pb-12">
+
+        {/* Header */}
+        <div className="space-y-1">
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
+            Screening Results
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400">
+            AI-powered autism spectrum assessment · {date}
+          </p>
+        </div>
+
+        {/* Main result card */}
+        <Card className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-white/10 shadow-xl rounded-3xl p-8 md:p-12">
+          {/* decorative blobs */}
+          <div className={`absolute top-0 right-0 w-72 h-72 rounded-full -translate-y-1/2 translate-x-1/3 opacity-20 ${isPositive ? 'bg-red-400' : 'bg-green-400'}`} />
+          <div className="absolute bottom-0 left-0 w-56 h-56 bg-blue-400/10 rounded-full translate-y-1/2 -translate-x-1/3" />
+
+          <div className="relative z-10 flex flex-col md:flex-row items-start gap-10">
+
+            {/* Left: child + prediction */}
+            <div className="flex-1 space-y-6">
+              <div className="space-y-1">
+                <p className="text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  Child Name
+                </p>
+                <p className="text-3xl font-bold text-slate-900 dark:text-white">
+                  {result.childName || localStorage.getItem('latestChildName') || 'Child'}
+                </p>
+              </div>
+
+              {/* Prediction badge */}
+              <div
+                className={`inline-flex items-center gap-3 px-6 py-3 rounded-2xl border-2 font-bold text-lg ${
+                  isPositive
+                    ? 'bg-red-50 dark:bg-red-900/30 border-red-300 dark:border-red-500/50 text-red-700 dark:text-red-300'
+                    : 'bg-green-50 dark:bg-green-900/30 border-green-300 dark:border-green-500/50 text-green-700 dark:text-green-300'
+                }`}
               >
-                <Download size={20} />
-                Export to PDF
-              </Button>
-              <Button
-                variant="outline"
-                className="py-4 text-slate-700 dark:text-slate-200 border-2 border-slate-300 dark:border-white/20 hover:bg-slate-100 dark:hover:bg-slate-800/50 font-semibold rounded-2xl"
-                onClick={() => navigate(ROUTES.PARENT_RE_SCREENING)}
+                {isPositive
+                  ? <AlertCircle size={24} />
+                  : <CheckCircle size={24} />
+                }
+                {result.predictionClass}
+              </div>
+
+              {/* Recommendation */}
+              <div className="bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-5">
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-2">
+                  Recommendation
+                </p>
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                  {recommendation}
+                </p>
+              </div>
+            </div>
+
+            {/* Right: confidence score */}
+            <div className="flex flex-col items-center justify-center gap-3 shrink-0">
+              <div
+                className={`w-36 h-36 rounded-full flex flex-col items-center justify-center border-4 shadow-lg ${
+                  isPositive
+                    ? 'border-red-400 bg-red-50 dark:bg-red-900/20'
+                    : 'border-green-400 bg-green-50 dark:bg-green-900/20'
+                }`}
               >
-                Take Screening Again
-              </Button>
-              <Button 
-                className="py-4 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold shadow-lg shadow-orange-500/25 rounded-2xl"
-                onClick={() => navigate(ROUTES.PARENT_BOOK_SPECIALIST)}
-              >
-                Book Specialist
-              </Button>
+                <span className={`text-3xl font-bold ${isPositive ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+                  {result.confidenceScore}%
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+                  Confidence
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 text-center max-w-[120px]">
+                AI model confidence in this prediction
+              </p>
             </div>
           </div>
-        )}
+        </Card>
+
+        {/* Action buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Button
+            onClick={() => exportPDF(result)}
+            className="flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg shadow-blue-500/25 rounded-2xl"
+          >
+            <Download size={18} />
+            Export Report
+          </Button>
+
+          <Button
+            variant="outline"
+            className="py-4 font-semibold rounded-2xl border-2"
+            onClick={() => {
+              // Clear submission lock so parent can redo screening
+              if (childId) {
+                localStorage.removeItem(`screeningSubmitted_${childId}`);
+                localStorage.removeItem(`screeningResult_${childId}`);
+              }
+              navigate(ROUTES.PARENT_RE_SCREENING);
+            }}
+          >
+            Take Again
+          </Button>
+
+          <Button
+            className="flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold shadow-lg shadow-orange-500/25 rounded-2xl"
+            onClick={() => navigate(ROUTES.PARENT_BOOK_SPECIALIST)}
+          >
+            Book Specialist
+            <ArrowRight size={18} />
+          </Button>
+        </div>
+
       </div>
     </MainLayout>
   );

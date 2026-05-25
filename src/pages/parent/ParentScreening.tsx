@@ -141,6 +141,13 @@ export const ParentScreening = () => {
           return;
         }
 
+        // ── Guard: if screening already submitted for this child, go straight to results ──
+        const alreadySubmitted = localStorage.getItem(`screeningSubmitted_${activeChildId}`) === 'true';
+        if (alreadySubmitted) {
+          navigate(ROUTES.PARENT_SCREENING_RESULTS + `?childId=${activeChildId}`, { replace: true });
+          return;
+        }
+
         setChildId(activeChildId);
         const storedChildName = localStorage.getItem('latestChildName');
         if (storedChildName) {
@@ -219,18 +226,25 @@ export const ParentScreening = () => {
         }, {} as Record<string, number>);
 
         if (childId) {
-          // Submit to backend if childId is available
+          // Submit to backend — capture result from response
+          let submitResult: Record<string, unknown> | null = null;
           try {
-            await screeningService.submitScreening(childId, payloadAnswers);
+            const res = await screeningService.submitScreening(childId, payloadAnswers);
+            submitResult = res as unknown as Record<string, unknown>;
+            // Persist result so results page can read it instantly without re-fetching
+            localStorage.setItem(`screeningResult_${childId}`, JSON.stringify(submitResult));
           } catch {
-            // Store locally if backend fails
+            // Store answers locally if backend fails
             localStorage.setItem(`screening_answers_${childId}`, JSON.stringify(payloadAnswers));
           }
-          // Mark screening complete for this user
+          // Mark screening complete — MUST be set BEFORE navigate so the guard reads it
           if (user?.id) {
             localStorage.setItem(`screeningComplete_${user.id}`, 'true');
           }
-          navigate(ROUTES.PARENT_SCREENING_RESULTS + `?childId=${childId}`);
+          // Lock this child so re-visiting /screening redirects straight to results
+          localStorage.setItem(`screeningSubmitted_${childId}`, 'true');
+          console.log('Screening submitted. Result:', submitResult, '| Navigating to results for child:', childId);
+          navigate(ROUTES.PARENT_SCREENING_RESULTS + `?childId=${childId}`, { replace: true });
         } else {
           navigate(ROUTES.PARENT_ADD_CHILD);
         }

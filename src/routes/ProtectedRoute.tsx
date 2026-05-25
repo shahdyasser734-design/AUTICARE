@@ -9,10 +9,12 @@ interface ProtectedRouteProps {
 }
 
 // Routes that are excluded from the screening redirect
-// (i.e., parents can visit these before completing screening)
+// (i.e., parents can visit these before/after completing screening)
 const SCREENING_EXEMPT_PATHS = [
   ROUTES.PARENT_SCREENING,
   ROUTES.PARENT_ADD_CHILD,
+  ROUTES.PARENT_SCREENING_RESULTS,  // ← result page must never be blocked
+  ROUTES.PARENT_RE_SCREENING,       // ← re-screening must never be blocked
 ];
 
 export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
